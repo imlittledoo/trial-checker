@@ -1,56 +1,77 @@
-# 🎁 Trial Checker
+# 🎁 Discord Trial Checker
 
-**Trial Checker** is a command-line utility designed to **check, validate, and verify trial / account access status** in an automated and efficient way.
+**Discord Trial Checker** is a multi-threaded command-line tool designed to **check Discord tokens for trial eligibility, discount offers, and billing-related status**, using Discord’s internal API endpoints.
 
 ---
 
 ## ⚙️ Features
 
-* 🔍 **Account Checker** – Verify trial or account validity in seconds
-* ⚡ **Fast Processing** – Lightweight and optimized for speed
-* 🔁 **Batch Checking** – Process multiple inputs at once
-* 📊 **Clear Output** – Shows status results in a clean format
-* 🌐 **Proxy Support** – Optional proxy integration for requests
-* 🧩 **Simple CLI Interface** – Easy to use with minimal setup
+* 🧵 **Multi-threaded checker** – configurable thread count (up to 500)
+* 🎯 **Token queue system** – processes tokens from file automatically
+* 🌐 **Proxy support** – optional HTTP proxy rotation
+* 🎁 **Trial detection** – identifies 1 month & 2 week trial offers
+* 💸 **Discount detection** – detects special discount eligibility
+* 📊 **Status categorization** – separates results into multiple outputs
+* 💾 **Auto saving results** – writes instantly to output files
+* 📁 **Sorted trial output** – sorts results by expiry date at the end
 
 ---
 
-## 🧠 Requirements
+## 🧠 How It Works
 
-* Python 3.9+
-* Stable internet connection
-* Valid input list (emails / accounts / tokens depending on config)
+The tool processes tokens from `input/tokens.txt` and sends requests to Discord’s billing API:
+
+- `/users/@me/billing/user-offer` → checks trial availability
+- `/users/@me/billing/subscriptions/preview` → checks discount eligibility
+
+Each token is classified into:
+
+- Valid trial (1 month / 2 week)
+- No trial available
+- Discount eligible
+- Invalid token
+- Error / rate limited
 
 ---
 
 ## 🧰 Installation
 
 ```bash
-# Clone this repository
 git clone https://github.com/imlittledoo/trial-checker.git
-
-# Navigate to the folder
 cd trial-checker
-
-# Install dependencies
 pip install -r requirements.txt
 ````
 
 ---
 
+## 📁 Input Setup
+
+Create the following files:
+
+### `input/tokens.txt`
+
+```
+email:password:token
+token
+```
+
+### Optional `input/proxies.txt`
+
+```
+username:password@ip:port
+```
+
+---
+
 ## ⚙️ Configuration
 
-If your tool uses config files, create or edit:
+Create `config.json`:
 
 ```json
 {
-  "proxyless": true,
-  "timeout": 10
+  "use_proxies": false
 }
 ```
-
-Optional:
-Add proxies in `input/proxies.txt` (one per line) if proxy mode is enabled.
 
 ---
 
@@ -60,37 +81,59 @@ Add proxies in `input/proxies.txt` (one per line) if proxy mode is enabled.
 python main.py
 ```
 
-Follow the menu / CLI prompts to:
+Then enter:
 
-1. Start account / trial checking
-2. Load input list
-3. View results (valid / invalid / expired)
-4. Save outputs automatically
-
-Results are stored in the `output/` directory.
+* Number of threads (1–500)
+* Tool will automatically start processing tokens
 
 ---
 
-## 📊 Output Example
+## 📤 Output Structure
+
+All results are saved in the `output/` folder:
 
 ```
-VALID   | user@email.com
-INVALID | test@email.com
-EXPIRED | old@email.com
+output/
+│
+├── trial.txt
+├── 1_month_trial.txt
+├── 2_week_trial.txt
+├── no_trial.txt
+├── invalid.txt
+├── errors.txt
+├── discount_tokens.txt
 ```
+
+---
+
+## 📊 Result Types
+
+* **1 Month Trial** → long-term Discord trial offer
+* **2 Week Trial** → short trial offer
+* **Discount Tokens** → accounts with 40% discount eligibility
+* **No Trial** → valid token but no offer
+* **Invalid** → expired or broken token
+* **Errors** → rate limits, connection issues, parsing failures
+
+---
+
+## 🧵 Performance
+
+* Fully multi-threaded (configurable up to 500 threads)
+* Uses TLS client sessions for request handling
+* Auto retry system for API failures & rate limits
+* Thread-safe file writing
 
 ---
 
 ## ⚠️ Disclaimer
 
-This tool is intended for **educational and testing purposes only**.
-The developer is not responsible for any misuse or damage caused by this tool.
-
-Use responsibly and follow applicable terms of service.
+This tool is for **educational and research purposes only**.
+Use at your own risk. The developer is not responsible for misuse or violations of Discord’s Terms of Service.
 
 ---
 
 ## 🧑‍💻 Author
 
-Developed by **ImLittledoo**
+Made by **ImLittledoo**
 If you like this project, consider giving it a ⭐
