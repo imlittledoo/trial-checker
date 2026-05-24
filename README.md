@@ -135,5 +135,5 @@ Use at your own risk. The developer is not responsible for misuse or violations 
 
 ## 🧑‍💻 Author
 
-Made by **ImLittledoo**
+Made by **ImLittledoo**.
 If you like this project, consider giving it a ⭐
